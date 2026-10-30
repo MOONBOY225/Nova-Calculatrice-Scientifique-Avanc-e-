@@ -6,7 +6,7 @@ on:
     paths:
       - 'NovaScientific-CloudBuild.zip'
       - '.github/workflows/android-apk.yml'
-    branches: [ main, master ]
+    branches: [ main, master, 'arena/0e6d24dd-nova-calculatrice-scientifique' ]
 
 permissions:
   contents: read
@@ -35,8 +35,15 @@ jobs:
           java-version: '17'
           cache: gradle
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Verify preinstalled Android SDK
+        run: |
+          test -n "$ANDROID_HOME"
+          test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+
+      - name: Test calculation parser
+        working-directory: source/NovaScientific
+        run: node TEST_PARSER.js
 
       - name: Install Android SDK components
         run: |
@@ -46,7 +53,6 @@ jobs:
             "build-tools;35.0.0" \
             "ndk;27.0.12077973" \
             "cmake;3.22.1"
-          yes | sdkmanager --licenses >/dev/null
 
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
