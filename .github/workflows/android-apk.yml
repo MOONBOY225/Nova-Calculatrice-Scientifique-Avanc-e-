@@ -43,7 +43,10 @@ jobs:
 
       - name: Test calculation parser
         working-directory: source/NovaScientific
-        run: node TEST_PARSER.js
+        run: |
+          node TEST_PARSER.js
+          npm install --no-save --no-package-lock --ignore-scripts jsdom@26.1.0
+          node TEST_APP.js
 
       - name: Install Android SDK components
         run: |
@@ -75,6 +78,13 @@ jobs:
             echo "::error title=Gradle build failed::$details"
           fi
           exit "$result"
+
+      - name: Report APK size
+        run: |
+          apk=source/NovaScientific/app/build/outputs/apk/debug/app-debug.apk
+          bytes=$(stat -c%s "$apk")
+          echo "APK debug : $bytes octets (arm64-v8a)" >> "$GITHUB_STEP_SUMMARY"
+          echo "APK debug : $bytes octets"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
