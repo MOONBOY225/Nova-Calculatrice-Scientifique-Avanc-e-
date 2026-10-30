@@ -62,6 +62,16 @@ jobs:
         with:
           targets: aarch64-linux-android
 
+      - name: Test native and Java arithmetic
+        working-directory: source/NovaScientific
+        run: |
+          cargo test --manifest-path native/rust/Cargo.toml
+          mkdir -p /tmp/nova-java-tests
+          javac -d /tmp/nova-java-tests app/src/main/java/com/moonboy/scicalc/BaseConverter.java tests/BaseConverterTest.java
+          java -cp /tmp/nova-java-tests BaseConverterTest
+          g++ -std=c++17 -O2 tests/integer_math_test.cpp -o /tmp/nova-integer-test
+          /tmp/nova-integer-test
+
       - name: Install cargo-ndk
         run: cargo install cargo-ndk --locked
 
