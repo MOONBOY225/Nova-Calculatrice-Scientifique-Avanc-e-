@@ -71,7 +71,7 @@ jobs:
           result=$?
           cat build.log
           if [ "$result" -ne 0 ]; then
-            details=$(head -n 150 build.log | awk '{printf "%s%%0A", $0}')
+            details=$(tr '\r' '\n' < build.log | grep -iE 'error|failed|exception|could not|what went wrong|failure|curl:' | head -n 30 | tr '\n' '|')
             echo "::error title=Gradle build failed::$details"
           fi
           exit "$result"
