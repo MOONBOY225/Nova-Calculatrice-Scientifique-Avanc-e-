@@ -84,7 +84,7 @@ jobs:
           apk=source/NovaScientific/app/build/outputs/apk/debug/app-debug.apk
           bytes=$(stat -c%s "$apk")
           echo "APK debug : $bytes octets (arm64-v8a)" >> "$GITHUB_STEP_SUMMARY"
-          echo "APK debug : $bytes octets"
+          echo "::notice title=Taille APK::APK debug arm64 : $bytes octets"
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
